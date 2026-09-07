@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificador de Segurança Digital & Guia Comunitário</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+  <!-- Header -->
+  <header class="bg-slate-800 border-b border-slate-700 py-6 px-4">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-emerald-400">Guilherme Manfrinato - ADS</h1>
+        <p class="text-xs text-slate-400">Ferramenta Educativa de Verificação de Senhas</p>
+      </div>
+      <span class="bg-emerald-500/10 text-emerald-400 text-xs px-3 py-1 rounded-full border border-emerald-500/20">
+        Acesso Público e Gratuito
+      </span>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-1 max-w-4xl mx-auto w-full p-4 grid gap-8 my-6">
+
+    <!-- Seção 1: Testador de Senhas -->
+    <section class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
+      <h2 class="text-xl font-semibold mb-2 text-slate-100">1. Verificador de Força de Senha</h2>
+      <p class="text-sm text-slate-400 mb-6">
+        Teste a resistência da sua senha em tempo real. <strong class="text-emerald-400">Nenhum dado é enviado para a internet</strong>; a validação ocorre apenas no seu navegador.
+      </p>
+
+      <div class="space-y-4">
+        <div>
+          <label for="password" class="block text-xs uppercase font-bold text-slate-400 mb-1">Digite uma senha para testar:</label>
+          <input type="password" id="password" placeholder="Ex: S3guranc3#2026" 
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-slate-100 focus:outline-none focus:border-emerald-500 transition-colors">
+        </div>
+
+        <!-- Barra de Progresso -->
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span class="text-slate-400">Nível de Segurança:</span>
+            <span id="strength-label" class="text-slate-500">Digite algo...</span>
+          </div>
+          <div class="w-full bg-slate-700 h-2.5 rounded-full overflow-hidden">
+            <div id="strength-bar" class="h-full w-0 bg-red-500 transition-all duration-300"></div>
+          </div>
+        </div>
+
+        <!-- Checklists de Requisitos -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-2">
+          <div id="req-length" class="text-slate-500 flex items-center gap-1">✕ Mínimo 8 caracteres</div>
+          <div id="req-upper" class="text-slate-500 flex items-center gap-1">✕ Letra Maiúscula</div>
+          <div id="req-number" class="text-slate-500 flex items-center gap-1">✕ Número</div>
+          <div id="req-special" class="text-slate-500 flex items-center gap-1">✕ Símbolo (@, #, $)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 2: Cartilha Rápida de Prevenção a Golpes -->
+    <section class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
+      <h2 class="text-xl font-semibold mb-4 text-slate-100">2. Guia Rápido: Como Evitar Golpes Frequentes</h2>
+      
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700/50">
+          <h3 class="font-bold text-emerald-400 text-sm mb-1">Golpe do WhatsApp</h3>
+          <p class="text-xs text-slate-300">Nunca envie códigos recebidos por SMS. Ative a "Verificação em Duas Etapas" nas configurações de segurança do aplicativo.</p>
+        </div>
+        
+        <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700/50">
+          <h3 class="font-bold text-emerald-400 text-sm mb-1">Links Falsos (Phishing)</h3>
+          <p class="text-xs text-slate-300">Bancos e instituições não pedem confirmação de senha por e-mail ou mensagem. Desconfie de promessas de prêmios ou urgências.</p>
+        </div>
+
+        <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700/50">
+          <h3 class="font-bold text-emerald-400 text-sm mb-1">Pagamentos via Pix</h3>
+          <p class="text-xs text-slate-300">Sempre confira o nome do destinatário final na tela do banco antes de confirmar qualquer transferência financeira.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-800 border-t border-slate-700 py-4 text-center text-xs text-slate-400">
+    <p>Projeto de Extensão Universitária — Tecnologia e Cibersegurança Aplicada à Comunidade</p>
+  </footer>
+
+  <!-- Lógica JavaScript -->
+  <script>
+    const passwordInput = document.getElementById('password');
+    const strengthBar = document.getElementById('strength-bar');
+    const strengthLabel = document.getElementById('strength-label');
+
+    const reqs = {
+      length: document.getElementById('req-length'),
+      upper: document.getElementById('req-upper'),
+      number: document.getElementById('req-number'),
+      special: document.getElementById('req-special'),
+    };
+
+    passwordInput.addEventListener('input', () => {
+      const pass = passwordInput.value;
+      let score = 0;
+
+      const checks = {
+        length: pass.length >= 8,
+        upper: /[A-Z]/.test(pass),
+        number: /[0-9]/.test(pass),
+        special: /[^A-Za-z0-9]/.test(pass)
+      };
+
+      // Atualiza visualização das regras
+      for (const key in checks) {
+        if (checks[key]) {
+          reqs[key].classList.remove('text-slate-500');
+          reqs[key].classList.add('text-emerald-400');
+          reqs[key].innerText = reqs[key].innerText.replace('✕', '✓');
+          score++;
+        } else {
+          reqs[key].classList.remove('text-emerald-400');
+          reqs[key].classList.add('text-slate-500');
+          reqs[key].innerText = reqs[key].innerText.replace('✓', '✕');
+        }
+      }
+
+      // Atualiza barra de força
+      if (pass.length === 0) {
+        strengthBar.style.width = '0%';
+        strengthLabel.innerText = 'Digite algo...';
+        strengthLabel.className = 'text-slate-500';
+      } else if (score <= 1) {
+        strengthBar.style.width = '25%';
+        strengthBar.className = 'h-full bg-red-500 transition-all duration-300';
+        strengthLabel.innerText = 'Muito Fraca';
+        strengthLabel.className = 'text-red-400';
+      } else if (score === 2 || score === 3) {
+        strengthBar.style.width = '65%';
+        strengthBar.className = 'h-full bg-yellow-500 transition-all duration-300';
+        strengthLabel.innerText = 'Média';
+        strengthLabel.className = 'text-yellow-400';
+      } else if (score === 4) {
+        strengthBar.style.width = '100%';
+        strengthBar.className = 'h-full bg-emerald-500 transition-all duration-300';
+        strengthLabel.innerText = 'Forte e Segura!';
+        strengthLabel.className = 'text-emerald-400';
+      }
+    });
+  </script>
+</body>
+</html>
